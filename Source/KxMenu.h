@@ -61,4 +61,7 @@
 + (UIColor *) tintColor;
 + (void) setTintColor: (UIColor *) tintColor;
 
++ (UIFont *) titleFont;
++ (void) setTitleFont: (UIFont *) titleFont;
+
 @end

@@ -84,8 +84,8 @@
     [_btn7 addTarget:self action:@selector(showMenu:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:_btn7];
 
-
     //[KxMenu setTintColor: [UIColor colorWithRed:15/255.0f green:97/255.0f blue:33/255.0f alpha:1.0]];
+    //[KxMenu setTitleFont:[UIFont systemFontOfSize:14]];
 }
 
 - (void)didReceiveMemoryWarning

@@ -394,7 +394,8 @@ typedef enum {
     const CGFloat kMarginX = 10.f;
     const CGFloat kMarginY = 5.f;
     
-    UIFont *titleFont = [UIFont boldSystemFontOfSize:16];
+    UIFont *titleFont = [KxMenu titleFont];
+    if (!titleFont) titleFont = [UIFont boldSystemFontOfSize:16];
     
     CGFloat maxImageWidth = 0;    
     CGFloat maxItemHeight = 0;
@@ -759,6 +760,7 @@ typedef enum {
 
 static KxMenu *gMenu;
 static UIColor *gTintColor;
+static UIFont *gTitleFont;
 
 @implementation KxMenu {
     
@@ -832,6 +834,18 @@ static UIColor *gTintColor;
 {
     if (tintColor != gTintColor) {
         gTintColor = tintColor;
+    }
+}
+
++ (UIFont *) titleFont
+{
+    return gTitleFont;
+}
+
++ (void) setTitleFont: (UIFont *) titleFont
+{
+    if (titleFont != gTitleFont) {
+        gTitleFont = titleFont;
     }
 }
 
