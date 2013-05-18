@@ -12,7 +12,16 @@
 @interface ViewController ()
 @end
 
-@implementation ViewController
+@implementation ViewController {
+    
+    UIButton *_btn1;
+    UIButton *_btn2;
+    UIButton *_btn3;
+    UIButton *_btn4;
+    UIButton *_btn5;
+    UIButton *_btn6;
+    UIButton *_btn7;
+}
 
 - (id)init
 {
@@ -28,45 +37,53 @@
     
     self.view = [[UIView alloc] initWithFrame:frame];
     self.view.backgroundColor = [UIColor whiteColor];
+    self.view.autoresizingMask = UIViewAutoresizingFlexibleHeight|UIViewAutoresizingFlexibleWidth;
     
     const CGFloat W = self.view.bounds.size.width;
     const CGFloat H = self.view.bounds.size.height;
     
-    UIButton *btn1 = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-    btn1.frame = CGRectMake(5, 5, 100, 50);
-    [btn1 setTitle:@"Click me" forState:UIControlStateNormal];
-    [btn1 addTarget:self action:@selector(showMenu:) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:btn1];
+    _btn1 = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+    _btn1.frame = CGRectMake(5, 5, 100, 50);
+    [_btn1 setTitle:@"Click me" forState:UIControlStateNormal];
+    [_btn1 addTarget:self action:@selector(showMenu:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:_btn1];
     
-    UIButton *btn2 = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-    btn2.frame = CGRectMake(5, H - 55, 100, 50);
-    [btn2 setTitle:@"Click me" forState:UIControlStateNormal];
-    [btn2 addTarget:self action:@selector(showMenu:) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:btn2];
+    _btn2 = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+    _btn2.frame = CGRectMake(5, H - 55, 100, 50);
+    [_btn2 setTitle:@"Click me" forState:UIControlStateNormal];
+    [_btn2 addTarget:self action:@selector(showMenu:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:_btn2];
     
-    UIButton *btn3 = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-    btn3.frame = CGRectMake(W - 105, 5, 100, 50);
-    [btn3 setTitle:@"Click me" forState:UIControlStateNormal];
-    [btn3 addTarget:self action:@selector(showMenu:) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:btn3];
+    _btn3 = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+    _btn3.frame = CGRectMake(W - 105, 5, 100, 50);
+    [_btn3 setTitle:@"Click me" forState:UIControlStateNormal];
+    [_btn3 addTarget:self action:@selector(showMenu:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:_btn3];
     
-    UIButton *btn4 = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-    btn4.frame = CGRectMake(W - 105, H - 55, 100, 50);
-    [btn4 setTitle:@"Click me" forState:UIControlStateNormal];
-    [btn4 addTarget:self action:@selector(showMenu:) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:btn4];
+    _btn4 = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+    _btn4.frame = CGRectMake(W - 105, H - 55, 100, 50);
+    [_btn4 setTitle:@"Click me" forState:UIControlStateNormal];
+    [_btn4 addTarget:self action:@selector(showMenu:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:_btn4];
     
-    UIButton *btn5 = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-    btn5.frame = CGRectMake(5, (H-50) * 0.5, 100, 50);
-    [btn5 setTitle:@"Click me" forState:UIControlStateNormal];
-    [btn5 addTarget:self action:@selector(showMenu:) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:btn5];
+    _btn5 = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+    _btn5.frame = CGRectMake(5, (H-50) * 0.5, 100, 50);
+    [_btn5 setTitle:@"Click me" forState:UIControlStateNormal];
+    [_btn5 addTarget:self action:@selector(showMenu:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:_btn5];
     
-    UIButton *btn6 = [UIButton buttonWithType:UIButtonTypeRoundedRect];
-    btn6.frame = CGRectMake(W - 105, (H-50) * 0.5, 100, 50);
-    [btn6 setTitle:@"Click me" forState:UIControlStateNormal];
-    [btn6 addTarget:self action:@selector(showMenu:) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:btn6];
+    _btn6 = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+    _btn6.frame = CGRectMake(W - 105, (H-50) * 0.5, 100, 50);
+    [_btn6 setTitle:@"Click me" forState:UIControlStateNormal];
+    [_btn6 addTarget:self action:@selector(showMenu:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:_btn6];
+    
+    _btn7 = [UIButton buttonWithType:UIButtonTypeRoundedRect];
+    _btn7.frame = CGRectMake((W - 100)* 0.5, (H-50) * 0.5, 100, 50);
+    [_btn7 setTitle:@"Click me" forState:UIControlStateNormal];
+    [_btn7 addTarget:self action:@selector(showMenu:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:_btn7];
+
 
     //[KxMenu setTintColor: [UIColor colorWithRed:15/255.0f green:97/255.0f blue:33/255.0f alpha:1.0]];
 }
@@ -74,6 +91,22 @@
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
+}
+
+- (void) viewDidLayoutSubviews
+{
+    [super viewDidLayoutSubviews];
+    
+    const CGFloat W = self.view.bounds.size.width;
+    const CGFloat H = self.view.bounds.size.height;
+    
+    _btn1.frame = CGRectMake(5, 5, 100, 50);
+    _btn2.frame = CGRectMake(5, H - 55, 100, 50);
+    _btn3.frame = CGRectMake(W - 105, 5, 100, 50);
+    _btn4.frame = CGRectMake(W - 105, H - 55, 100, 50);
+    _btn5.frame = CGRectMake(5, (H-50) * 0.5, 100, 50);
+    _btn6.frame = CGRectMake(W - 105, (H-50) * 0.5, 100, 50);
+    _btn7.frame = CGRectMake((W - 100)* 0.5, (H-50) * 0.5, 100, 50);
 }
 
 - (void)showMenu:(UIButton *)sender

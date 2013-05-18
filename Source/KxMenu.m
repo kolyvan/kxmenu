@@ -182,8 +182,8 @@ typedef enum {
 {
     const CGSize contentSize = _contentView.frame.size;
     
-    const CGFloat outerWidth = view.frame.size.width;
-    const CGFloat outerHeight = view.frame.size.height;
+    const CGFloat outerWidth = view.bounds.size.width;
+    const CGFloat outerHeight = view.bounds.size.height;
     
     const CGFloat rectX0 = fromRect.origin.x;
     const CGFloat rectX1 = fromRect.origin.x + fromRect.size.width;
