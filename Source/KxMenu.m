@@ -765,6 +765,7 @@ static UIFont *gTitleFont;
 @implementation KxMenu {
     
     KxMenuView *_menuView;
+    BOOL        _observing;
 }
 
 + (instancetype) sharedMenu
@@ -787,6 +788,13 @@ static UIFont *gTitleFont;
     return self;
 }
 
+- (void) dealloc
+{
+    if (_observing) {        
+        [[NSNotificationCenter defaultCenter] removeObserver:self];
+    }
+}
+
 - (void) showMenuInView:(UIView *)view
                fromRect:(CGRect)rect
               menuItems:(NSArray *)menuItems
@@ -799,6 +807,17 @@ static UIFont *gTitleFont;
         [_menuView dismissMenu:NO];
         _menuView = nil;
     }
+
+    if (!_observing) {
+    
+        _observing = YES;
+        
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(orientationWillChange:)
+                                                     name:UIApplicationWillChangeStatusBarOrientationNotification
+                                                   object:nil];
+    }
+
     
     _menuView = [[KxMenuView alloc] init];
     [_menuView showMenuInView:view fromRect:rect menuItems:menuItems];    
@@ -808,9 +827,20 @@ static UIFont *gTitleFont;
 {
     if (_menuView) {
         
-        [_menuView dismissMenu:YES];
+        [_menuView dismissMenu:NO];
         _menuView = nil;
     }
+    
+    if (_observing) {
+        
+        _observing = NO;
+        [[NSNotificationCenter defaultCenter] removeObserver:self];
+    }
+}
+
+- (void) orientationWillChange: (NSNotification *) n
+{
+    [self dismissMenu];
 }
 
 + (void) showMenuInView:(UIView *)view
@@ -822,7 +852,7 @@ static UIFont *gTitleFont;
 
 + (void) dismissMenu
 {
-    [[self sharedMenu] dismissMenu:NO];
+    [[self sharedMenu] dismissMenu];
 }
 
 + (UIColor *) tintColor
