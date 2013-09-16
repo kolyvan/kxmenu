@@ -60,21 +60,23 @@ const CGFloat kArrowSize = 12.f;
     if (self) {
         self.backgroundColor = [UIColor clearColor];
         self.opaque = NO;
+        
+        UITapGestureRecognizer *gestureRecognizer;
+        gestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self
+                                                                    action:@selector(singleTap:)];
+        [self addGestureRecognizer:gestureRecognizer];
     }
     return self;
 }
 
-- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
+// thank horaceho https://github.com/horaceho
+// for his solution described in https://github.com/kolyvan/kxmenu/issues/9
+
+- (void)singleTap:(UITapGestureRecognizer *)recognizer
 {
-    UIView *touched = [[touches anyObject] view];
-    if (touched == self) {
-        
-        for (UIView *v in self.subviews) {
-            if ([v isKindOfClass:[KxMenuView class]]
-                && [v respondsToSelector:@selector(dismissMenu:)]) {
-                
-                [v performSelector:@selector(dismissMenu:) withObject:@(YES)];
-            }
+    for (UIView *v in self.subviews) {
+        if ([v isKindOfClass:[KxMenuView class]] && [v respondsToSelector:@selector(dismissMenu:)]) {
+            [v performSelector:@selector(dismissMenu:) withObject:@(YES)];
         }
     }
 }
