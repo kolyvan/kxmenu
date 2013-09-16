@@ -114,7 +114,7 @@
     NSArray *menuItems =
     @[
       
-      [KxMenuItem menuItem:@"ACTION MENU"
+      [KxMenuItem menuItem:@"ACTION MENU 1234456"
                      image:nil
                     target:nil
                     action:NULL],
@@ -124,8 +124,8 @@
                     target:self
                     action:@selector(pushMenuItem:)],
       
-      [KxMenuItem menuItem:@"Check menu"
-                     image:[UIImage imageNamed:@"check_icon"]
+      [KxMenuItem menuItem:@"Check this menu"
+                     image:nil
                     target:self
                     action:@selector(pushMenuItem:)],
       
