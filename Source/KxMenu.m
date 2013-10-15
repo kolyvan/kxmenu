@@ -434,8 +434,8 @@ typedef enum {
 
     const CGFloat titleX = kMarginX * 2 + maxImageWidth;
     const CGFloat titleWidth = maxItemWidth - titleX - kMarginX * 2;
-    
-    UIImage *selectedImage = [KxMenuView selectedImage:(CGSize){maxItemWidth, maxItemHeight + 2}];
+  
+    UIImage *defaultSelectedImage = [KxMenuView selectedImage:(CGSize){maxItemWidth, maxItemHeight + 2}];
     UIImage *gradientLine = [KxMenuView gradientLine: (CGSize){maxItemWidth - kMarginX * 4, 1}];
     
     UIView *contentView = [[UIView alloc] initWithFrame:CGRectZero];
@@ -470,9 +470,14 @@ typedef enum {
             [button addTarget:self
                        action:@selector(performAction:)
              forControlEvents:UIControlEventTouchUpInside];
-            
-            [button setBackgroundImage:selectedImage forState:UIControlStateHighlighted];
-            
+          
+            if (menuItem.selectedColor) {
+                UIImage *selectedImage = [KxMenuView createImageFromColor:menuItem.selectedColor];
+                [button setBackgroundImage:selectedImage forState:UIControlStateHighlighted];
+            } else {
+                [button setBackgroundImage:defaultSelectedImage forState:UIControlStateHighlighted];
+            }
+          
             [itemView addSubview:button];
         }
         
@@ -566,6 +571,19 @@ typedef enum {
     }
     
     return point;
+}
+
++ (UIImage *)createImageFromColor:(UIColor *)color
+{
+    CGRect rect = CGRectMake(0.0f, 0.0f, 1.0f, 1.0f);
+    UIGraphicsBeginImageContext(rect.size);
+    CGContextRef context = UIGraphicsGetCurrentContext();
+    CGContextSetFillColorWithColor(context, [color CGColor]);
+    CGContextFillRect(context, rect);
+    
+    UIImage *theImage = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    return theImage;
 }
 
 + (UIImage *) selectedImage: (CGSize) size
