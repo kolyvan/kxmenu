@@ -41,6 +41,7 @@
 @property (readwrite, nonatomic, weak) id target;
 @property (readwrite, nonatomic) SEL action;
 @property (readwrite, nonatomic, strong) UIColor *foreColor;
+@property (readwrite, nonatomic, strong) UIColor *selectedColor;
 @property (readwrite, nonatomic) NSTextAlignment alignment;
 
 + (instancetype) menuItem:(NSString *) title

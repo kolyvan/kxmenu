@@ -113,14 +113,13 @@
 {
     NSArray *menuItems =
     @[
-      
       [KxMenuItem menuItem:@"ACTION MENU 1234456"
                      image:nil
                     target:nil
                     action:NULL],
             
       [KxMenuItem menuItem:@"Share this"
-                     image:[UIImage imageNamed:@"action_icon"]
+                     image:nil//[UIImage imageNamed:@"action_icon"]
                     target:self
                     action:@selector(pushMenuItem:)],
       
@@ -148,7 +147,11 @@
     KxMenuItem *first = menuItems[0];
     first.foreColor = [UIColor colorWithRed:47/255.0f green:112/255.0f blue:225/255.0f alpha:1.0];
     first.alignment = NSTextAlignmentCenter;
-    
+  
+    KxMenuItem *custom = menuItems[2];
+    custom.foreColor = [UIColor greenColor];
+    custom.selectedColor = [UIColor grayColor];
+  
     [KxMenu showMenuInView:self.view
                   fromRect:sender.frame
                  menuItems:menuItems];
