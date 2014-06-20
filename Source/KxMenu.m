@@ -38,13 +38,15 @@
 
 #import "KxMenu.h"
 #import <QuartzCore/QuartzCore.h>
+#import "UIImage+ImageEffects.h"
+@import Accelerate;
 
 const CGFloat kArrowSize = 12.f;
 
 ////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
 
 @interface KxMenuView : UIView
+@property (readwrite, nonatomic) BOOL blurredBackground;
 @end
 
 @interface KxMenuOverlay : UIView
@@ -158,20 +160,17 @@ typedef enum {
     CGFloat                     _arrowPosition;
     UIView                      *_contentView;
     NSArray                     *_menuItems;
+    UIImage                     *_backImage;
 }
 
 - (id)init
 {
     self = [super initWithFrame:CGRectZero];    
     if(self) {
-
+        
         self.backgroundColor = [UIColor clearColor];
         self.opaque = YES;
         self.alpha = 0;
-        
-        self.layer.shadowOpacity = 0.5;
-        self.layer.shadowOffset = CGSizeMake(2, 2);
-        self.layer.shadowRadius = 2;
     }
     
     return self;
@@ -321,14 +320,28 @@ typedef enum {
     [self addSubview:_contentView];
     
     [self setupFrameInView:view fromRect:rect];
+    
+    _contentView.hidden = YES;
+    
+    const CGRect toFrame = self.frame;
+    
+    if (_blurredBackground) {
+        
+        UIColor *tintColor = [KxMenu tintColor];
+        if (!tintColor) {
+            tintColor = [UIColor colorWithRed:0.040 green:0.040 blue:0.040 alpha:0.5f];
+        }
+        
+        _backImage = [KxMenuView blurredBackground:view
+                                            inRect:toFrame
+                                         tintColor:tintColor];
+    }
+    
+    self.frame = (CGRect){self.arrowPoint, 1, 1};
         
     KxMenuOverlay *overlay = [[KxMenuOverlay alloc] initWithFrame:view.bounds];
     [overlay addSubview:self];
     [view addSubview:overlay];
-    
-    _contentView.hidden = YES;
-    const CGRect toFrame = self.frame;
-    self.frame = (CGRect){self.arrowPoint, 1, 1};
     
     [UIView animateWithDuration:0.2
                      animations:^(void) {
@@ -337,6 +350,7 @@ typedef enum {
                          self.frame = toFrame;
                          
                      } completion:^(BOOL completed) {
+                         
                          _contentView.hidden = NO;
                      }];
    
@@ -624,16 +638,6 @@ typedef enum {
 - (void)drawBackground:(CGRect)frame
              inContext:(CGContextRef) context
 {
-    CGFloat R0 = 0.267, G0 = 0.303, B0 = 0.335;
-    CGFloat R1 = 0.040, G1 = 0.040, B1 = 0.040;
-    
-    UIColor *tintColor = [KxMenu tintColor];
-    if (tintColor) {
-        
-        CGFloat a;
-        [tintColor getRed:&R0 green:&G0 blue:&B0 alpha:&a];
-    }
-    
     CGFloat X0 = frame.origin.x;
     CGFloat X1 = frame.origin.x + frame.size.width;
     CGFloat Y0 = frame.origin.y;
@@ -644,7 +648,7 @@ typedef enum {
     UIBezierPath *arrowPath = [UIBezierPath bezierPath];
     
     // fix the issue with gap of arrow's base if on the edge
-    const CGFloat kEmbedFix = 3.f;
+    const CGFloat kEmbedFix = 0; //3.f;
     
     if (_arrowDirection == KxMenuViewArrowDirectionUp) {
         
@@ -658,8 +662,6 @@ typedef enum {
         [arrowPath addLineToPoint: (CGPoint){arrowX1, arrowY1}];
         [arrowPath addLineToPoint: (CGPoint){arrowX0, arrowY1}];
         [arrowPath addLineToPoint: (CGPoint){arrowXM, arrowY0}];
-        
-        [[UIColor colorWithRed:R0 green:G0 blue:B0 alpha:1] set];
         
         Y0 += kArrowSize;
         
@@ -676,8 +678,6 @@ typedef enum {
         [arrowPath addLineToPoint: (CGPoint){arrowX0, arrowY0}];
         [arrowPath addLineToPoint: (CGPoint){arrowXM, arrowY1}];
         
-        [[UIColor colorWithRed:R1 green:G1 blue:B1 alpha:1] set];
-        
         Y1 -= kArrowSize;
         
     } else if (_arrowDirection == KxMenuViewArrowDirectionLeft) {
@@ -692,8 +692,6 @@ typedef enum {
         [arrowPath addLineToPoint: (CGPoint){arrowX1, arrowY0}];
         [arrowPath addLineToPoint: (CGPoint){arrowX1, arrowY1}];
         [arrowPath addLineToPoint: (CGPoint){arrowX0, arrowYM}];
-        
-        [[UIColor colorWithRed:R0 green:G0 blue:B0 alpha:1] set];
         
         X0 += kArrowSize;
         
@@ -710,53 +708,114 @@ typedef enum {
         [arrowPath addLineToPoint: (CGPoint){arrowX1, arrowY1}];
         [arrowPath addLineToPoint: (CGPoint){arrowX0, arrowYM}];
         
-        [[UIColor colorWithRed:R1 green:G1 blue:B1 alpha:1] set];
-        
         X1 -= kArrowSize;
     }
-    
-    [arrowPath fill];
-
-    // render body
     
     const CGRect bodyFrame = {X0, Y0, X1 - X0, Y1 - Y0};
     
     UIBezierPath *borderPath = [UIBezierPath bezierPathWithRoundedRect:bodyFrame
                                                           cornerRadius:8];
-        
-    const CGFloat locations[] = {0, 1};
-    const CGFloat components[] = {
-        R0, G0, B0, 1,
-        R1, G1, B1, 1,
-    };
     
-    CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
-    CGGradientRef gradient = CGGradientCreateWithColorComponents(colorSpace,
-                                                                 components,
-                                                                 locations,
-                                                                 sizeof(locations)/sizeof(locations[0]));
-    CGColorSpaceRelease(colorSpace);
-    
-    
-    [borderPath addClip];
-    
-    CGPoint start, end;
-    
-    if (_arrowDirection == KxMenuViewArrowDirectionLeft ||
-        _arrowDirection == KxMenuViewArrowDirectionRight) {
-                
-        start = (CGPoint){X0, Y0};
-        end = (CGPoint){X1, Y0};
+    if (_backImage)
+    {
+        [borderPath appendPath:arrowPath];
+        [borderPath addClip];
+        [_backImage drawInRect:frame];
         
     } else {
+    
+        CGFloat R0 = 0.267, G0 = 0.303, B0 = 0.335;
+        CGFloat R1 = 0.040, G1 = 0.040, B1 = 0.040;
         
-        start = (CGPoint){X0, Y0};
-        end = (CGPoint){X0, Y1};
+        UIColor *tintColor = [KxMenu tintColor];
+        if (tintColor) {
+            
+            CGFloat a;
+            [tintColor getRed:&R0 green:&G0 blue:&B0 alpha:&a];
+        }
+        
+        if (_arrowDirection == KxMenuViewArrowDirectionUp ||
+            _arrowDirection == KxMenuViewArrowDirectionLeft) {
+            
+            [[UIColor colorWithRed:R0 green:G0 blue:B0 alpha:1] set];
+            
+        } else {
+            
+            [[UIColor colorWithRed:R1 green:G1 blue:B1 alpha:1] set];
+        }
+        
+        [arrowPath fill];
+
+        // render body
+        
+        const CGFloat locations[] = {0, 1};
+        const CGFloat components[] = {
+            R0, G0, B0, 1,
+            R1, G1, B1, 1,
+        };
+        
+        CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
+        CGGradientRef gradient = CGGradientCreateWithColorComponents(colorSpace,
+                                                                     components,
+                                                                     locations,
+                                                                     sizeof(locations)/sizeof(locations[0]));
+        CGColorSpaceRelease(colorSpace);
+        
+        
+        [borderPath addClip];
+        
+        CGPoint start, end;
+        
+        if (_arrowDirection == KxMenuViewArrowDirectionLeft ||
+            _arrowDirection == KxMenuViewArrowDirectionRight) {
+            
+            start = (CGPoint){X0, Y0};
+            end = (CGPoint){X1, Y0};
+            
+        } else {
+            
+            start = (CGPoint){X0, Y0};
+            end = (CGPoint){X0, Y1};
+        }
+        
+        CGContextDrawLinearGradient(context, gradient, start, end, 0);
+        
+        CGGradientRelease(gradient);
+    }
+}
+
++ (UIImage *) blurredBackground:(UIView *)v
+                         inRect:(CGRect)rect
+                      tintColor:(UIColor *)tintColor
+{
+    const CGFloat screenScale = 1.0f; //v.window.screen.scale;
+    
+    UIImage *image;
+
+    UIGraphicsBeginImageContextWithOptions(rect.size, NO, screenScale);
+    
+    CGContextTranslateCTM(UIGraphicsGetCurrentContext(),
+                          -rect.origin.x,
+                          -rect.origin.y);
+    
+    if ([v respondsToSelector:@selector(drawViewHierarchyInRect:afterScreenUpdates:)] &&
+        [v drawViewHierarchyInRect:v.bounds afterScreenUpdates:NO])
+    {
+        image = UIGraphicsGetImageFromCurrentImageContext();
     }
     
-    CGContextDrawLinearGradient(context, gradient, start, end, 0);
+    if (!image) {
+        
+        [v.layer renderInContext:UIGraphicsGetCurrentContext()];
+        image = UIGraphicsGetImageFromCurrentImageContext();
+    }
     
-    CGGradientRelease(gradient);    
+    UIGraphicsEndImageContext();
+
+    return [image applyBlurWithRadius:6
+                            tintColor:tintColor
+                saturationDeltaFactor:1.8
+                            maskImage:nil];
 }
 
 @end
@@ -826,6 +885,8 @@ static UIFont *gTitleFont;
 
     
     _menuView = [[KxMenuView alloc] init];
+    _menuView.blurredBackground = YES;
+    
     [_menuView showMenuInView:view fromRect:rect menuItems:menuItems];    
 }
 

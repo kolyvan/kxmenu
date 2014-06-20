@@ -28,6 +28,7 @@
 		87292BE0174666F800821739 /* search_icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 87292BD6174666F800821739 /* search_icon.png */; };
 		87292BE1174666F800821739 /* search_icon@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 87292BD7174666F800821739 /* search_icon@2x.png */; };
 		87292BE51746670C00821739 /* KxMenu.m in Sources */ = {isa = PBXBuildFile; fileRef = 87292BE41746670C00821739 /* KxMenu.m */; };
+		879119041952EA9B00DDD13C /* UIImage+ImageEffects.m in Sources */ = {isa = PBXBuildFile; fileRef = 879119031952EA9B00DDD13C /* UIImage+ImageEffects.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -58,6 +59,8 @@
 		87292BD7174666F800821739 /* search_icon@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "search_icon@2x.png"; path = "resources/search_icon@2x.png"; sourceTree = "<group>"; };
 		87292BE31746670C00821739 /* KxMenu.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = KxMenu.h; path = Source/KxMenu.h; sourceTree = "<group>"; };
 		87292BE41746670C00821739 /* KxMenu.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = KxMenu.m; path = Source/KxMenu.m; sourceTree = "<group>"; };
+		879119021952EA9B00DDD13C /* UIImage+ImageEffects.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "UIImage+ImageEffects.h"; path = "Source/UIImage+ImageEffects.h"; sourceTree = "<group>"; };
+		879119031952EA9B00DDD13C /* UIImage+ImageEffects.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "UIImage+ImageEffects.m"; path = "Source/UIImage+ImageEffects.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -149,6 +152,8 @@
 		87292BE21746670000821739 /* KxMenu */ = {
 			isa = PBXGroup;
 			children = (
+				879119021952EA9B00DDD13C /* UIImage+ImageEffects.h */,
+				879119031952EA9B00DDD13C /* UIImage+ImageEffects.m */,
 				87292BE31746670C00821739 /* KxMenu.h */,
 				87292BE41746670C00821739 /* KxMenu.m */,
 			);
@@ -231,6 +236,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				87292BB41746668300821739 /* main.m in Sources */,
+				879119041952EA9B00DDD13C /* UIImage+ImageEffects.m in Sources */,
 				87292BB81746668300821739 /* AppDelegate.m in Sources */,
 				87292BC11746668300821739 /* ViewController.m in Sources */,
 				87292BE51746670C00821739 /* KxMenu.m in Sources */,
@@ -312,6 +318,7 @@
 		87292BCB1746668300821739 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "KxMenuExample/KxMenuExample-Prefix.pch";
 				INFOPLIST_FILE = "KxMenuExample/KxMenuExample-Info.plist";
@@ -324,6 +331,7 @@
 		87292BCC1746668300821739 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "KxMenuExample/KxMenuExample-Prefix.pch";
 				INFOPLIST_FILE = "KxMenuExample/KxMenuExample-Info.plist";

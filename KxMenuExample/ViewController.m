@@ -114,7 +114,7 @@
     NSArray *menuItems =
     @[
       
-      [KxMenuItem menuItem:@"ACTION MENU 1234456"
+      [KxMenuItem menuItem:@"ACTION MENU"
                      image:nil
                     target:nil
                     action:NULL],
