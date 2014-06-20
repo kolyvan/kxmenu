@@ -58,8 +58,8 @@
     
     _btn3 = [UIButton buttonWithType:UIButtonTypeRoundedRect];
     _btn3.frame = CGRectMake(W - 105, 5, 100, 50);
-    [_btn3 setTitle:@"Click me (Blur)" forState:UIControlStateNormal];
-    [_btn3 addTarget:self action:@selector(showMenuBlur:) forControlEvents:UIControlEventTouchUpInside];
+    [_btn3 setTitle:@"Click me (Ex)" forState:UIControlStateNormal];
+    [_btn3 addTarget:self action:@selector(showMenuEx:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:_btn3];
     
     _btn4 = [UIButton buttonWithType:UIButtonTypeRoundedRect];
@@ -127,16 +127,20 @@
                  menuItems:self.mkMenuItems];
 }
 
-- (void)showMenuBlur:(UIButton *)sender
+- (void)showMenuEx:(UIButton *)sender
 {
     if (!_kxMenu) {
         
         _kxMenu = [KxMenu new];
         _kxMenu.menuItems = self.mkMenuItems;
         
-        _kxMenu.blurredBackground = YES;
-
+        if (floor(NSFoundationVersionNumber) > NSFoundationVersionNumber_iOS_6_1) {
+            _kxMenu.blurredBackground = YES;
+        }
+        
         _kxMenu.tintColor = [[UIColor orangeColor] colorWithAlphaComponent:0.5f];
+        _kxMenu.tintColor1 = [UIColor orangeColor];
+        
         _kxMenu.selectedColor  = [UIColor colorWithRed:0.9f green:0 blue:0 alpha:1.f];
         _kxMenu.selectedColor1 = [UIColor colorWithRed:0.8f green:0 blue:0 alpha:1.f];
     }
