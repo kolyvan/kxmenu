@@ -862,7 +862,10 @@ typedef enum {
 {
     KxMenu *menu = [KxMenu new];
     menu.menuItems = menuItems;
-    [menu showMenuInView:view fromRect:rect];
+    dispatch_async(dispatch_get_main_queue(), ^{
+        // it allows to tune parameters before showing menu
+        [menu showMenuInView:view fromRect:rect];
+    });
     return menu;
 }
 
