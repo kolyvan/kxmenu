@@ -215,7 +215,7 @@ typedef enum {
             point.x = outerWidth - contentSize.width - kMargin;
         
         _arrowPosition = rectXM - point.x;
-        //_arrowPosition = MAX(16, MIN(_arrowPosition, contentSize.width - 16));        
+        _arrowPosition = MAX(20.f, MIN(_arrowPosition, contentSize.width - 20.f));
         _contentView.frame = (CGRect){0, kArrowSize, contentSize};
                 
         self.frame = (CGRect) {
@@ -240,6 +240,7 @@ typedef enum {
             point.x = outerWidth - contentSize.width - kMargin;
         
         _arrowPosition = rectXM - point.x;
+        _arrowPosition = MAX(20.f, MIN(_arrowPosition, contentSize.width - 20.f));
         _contentView.frame = (CGRect){CGPointZero, contentSize};
         
         self.frame = (CGRect) {
@@ -647,16 +648,13 @@ typedef enum {
     
     UIBezierPath *arrowPath = [UIBezierPath bezierPath];
     
-    // fix the issue with gap of arrow's base if on the edge
-    const CGFloat kEmbedFix = 0; //3.f;
-    
     if (_arrowDirection == KxMenuViewArrowDirectionUp) {
         
         const CGFloat arrowXM = _arrowPosition;
         const CGFloat arrowX0 = arrowXM - kArrowSize;
         const CGFloat arrowX1 = arrowXM + kArrowSize;
         const CGFloat arrowY0 = Y0;
-        const CGFloat arrowY1 = Y0 + kArrowSize + kEmbedFix;
+        const CGFloat arrowY1 = Y0 + kArrowSize;
         
         [arrowPath moveToPoint:    (CGPoint){arrowXM, arrowY0}];
         [arrowPath addLineToPoint: (CGPoint){arrowX1, arrowY1}];
@@ -670,7 +668,7 @@ typedef enum {
         const CGFloat arrowXM = _arrowPosition;
         const CGFloat arrowX0 = arrowXM - kArrowSize;
         const CGFloat arrowX1 = arrowXM + kArrowSize;
-        const CGFloat arrowY0 = Y1 - kArrowSize - kEmbedFix;
+        const CGFloat arrowY0 = Y1 - kArrowSize;
         const CGFloat arrowY1 = Y1;
         
         [arrowPath moveToPoint:    (CGPoint){arrowXM, arrowY1}];
@@ -684,7 +682,7 @@ typedef enum {
         
         const CGFloat arrowYM = _arrowPosition;        
         const CGFloat arrowX0 = X0;
-        const CGFloat arrowX1 = X0 + kArrowSize + kEmbedFix;
+        const CGFloat arrowX1 = X0 + kArrowSize;
         const CGFloat arrowY0 = arrowYM - kArrowSize;;
         const CGFloat arrowY1 = arrowYM + kArrowSize;
         
@@ -699,7 +697,7 @@ typedef enum {
         
         const CGFloat arrowYM = _arrowPosition;        
         const CGFloat arrowX0 = X1;
-        const CGFloat arrowX1 = X1 - kArrowSize - kEmbedFix;
+        const CGFloat arrowX1 = X1 - kArrowSize;
         const CGFloat arrowY0 = arrowYM - kArrowSize;;
         const CGFloat arrowY1 = arrowYM + kArrowSize;
         
