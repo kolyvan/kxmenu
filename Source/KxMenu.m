@@ -45,10 +45,6 @@ const CGFloat kArrowSize = 12.f;
 
 ////////////////////////////////////////////////////////////////////////////////
 
-@interface KxMenuView : UIView
-@property (readwrite, nonatomic) BOOL blurredBackground;
-@end
-
 @interface KxMenuOverlay : UIView
 @end
 
@@ -77,7 +73,7 @@ const CGFloat kArrowSize = 12.f;
 - (void)singleTap:(UITapGestureRecognizer *)recognizer
 {
     for (UIView *v in self.subviews) {
-        if ([v isKindOfClass:[KxMenuView class]] && [v respondsToSelector:@selector(dismissMenu:)]) {
+        if ([v isKindOfClass:[KxMenu class]] && [v respondsToSelector:@selector(dismissMenu:)]) {
             [v performSelector:@selector(dismissMenu:) withObject:@(YES)];
         }
     }
@@ -85,7 +81,6 @@ const CGFloat kArrowSize = 12.f;
 
 @end
 
-////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
 @implementation KxMenuItem
@@ -154,13 +149,14 @@ typedef enum {
     
 } KxMenuViewArrowDirection;
 
-@implementation KxMenuView {
+@implementation KxMenu {
     
     KxMenuViewArrowDirection    _arrowDirection;
     CGFloat                     _arrowPosition;
     UIView                      *_contentView;
     NSArray                     *_menuItems;
     UIImage                     *_backImage;
+    BOOL                        _didObserve;
 }
 
 - (id)init
@@ -171,12 +167,31 @@ typedef enum {
         self.backgroundColor = [UIColor clearColor];
         self.opaque = YES;
         self.alpha = 0;
+        
+        _didObserve = YES;
+        
+        [[NSNotificationCenter defaultCenter] addObserver:self
+                                                 selector:@selector(orientationWillChange:)
+                                                     name:UIApplicationWillChangeStatusBarOrientationNotification
+                                                   object:nil];
     }
-    
+
     return self;
 }
 
-// - (void) dealloc { NSLog(@"dealloc %@", self); }
+- (void) dealloc
+{
+    if (_didObserve) {
+        [[NSNotificationCenter defaultCenter] removeObserver:self];
+    }
+    
+    // NSLog(@"dealloc %@", self);
+}
+
+- (void) orientationWillChange: (NSNotification *) n
+{
+    [self dismissMenu:NO];
+}
 
 - (void) setupFrameInView:(UIView *)view
                  fromRect:(CGRect)fromRect
@@ -313,10 +328,7 @@ typedef enum {
 
 - (void)showMenuInView:(UIView *)view
               fromRect:(CGRect)rect
-             menuItems:(NSArray *)menuItems
 {
-    _menuItems = menuItems;
-    
     _contentView = [self mkContentView];
     [self addSubview:_contentView];
     
@@ -328,14 +340,14 @@ typedef enum {
     
     if (_blurredBackground) {
         
-        UIColor *tintColor = [KxMenu tintColor];
+        UIColor *tintColor = self.tintColor;
         if (!tintColor) {
-            tintColor = [UIColor colorWithRed:0.040 green:0.040 blue:0.040 alpha:0.5f];
+            tintColor = [UIColor colorWithRed:0.04f green:0.04f blue:0.04f alpha:0.5f];
         }
         
-        _backImage = [KxMenuView blurredBackground:view
-                                            inRect:toFrame
-                                         tintColor:tintColor];
+        _backImage = [KxMenu blurredBackground:view
+                                        inRect:toFrame
+                                     tintColor:tintColor];
     }
     
     self.frame = (CGRect){self.arrowPoint, 1, 1};
@@ -343,6 +355,8 @@ typedef enum {
     KxMenuOverlay *overlay = [[KxMenuOverlay alloc] initWithFrame:view.bounds];
     [overlay addSubview:self];
     [view addSubview:overlay];
+    
+    [self setNeedsDisplay];
     
     [UIView animateWithDuration:0.2
                      animations:^(void) {
@@ -357,33 +371,39 @@ typedef enum {
    
 }
 
+- (void)dismissMenu
+{
+    [self dismissMenu:YES];
+}
+
 - (void)dismissMenu:(BOOL) animated
 {
-    if (self.superview) {
-     
-        if (animated) {
-            
-            _contentView.hidden = YES;            
-            const CGRect toFrame = (CGRect){self.arrowPoint, 1, 1};
-            
-            [UIView animateWithDuration:0.2
-                             animations:^(void) {
-                                 
-                                 self.alpha = 0;
-                                 self.frame = toFrame;
-                                 
-                             } completion:^(BOOL finished) {
-                                 
-                                 if ([self.superview isKindOfClass:[KxMenuOverlay class]])
-                                     [self.superview removeFromSuperview];
-                                 [self removeFromSuperview];
-                             }];
-            
-        } else {
-            
-            if ([self.superview isKindOfClass:[KxMenuOverlay class]])
-                [self.superview removeFromSuperview];
-            [self removeFromSuperview];
+    if (!self.superview) {
+        return;
+    }
+    
+    if (animated) {
+        
+        _contentView.hidden = YES;
+        const CGRect toFrame = (CGRect){self.arrowPoint, 1, 1};
+        
+        [UIView animateWithDuration:0.2
+                         animations:^(void) {
+                             
+                             self.alpha = 0;
+                             self.frame = toFrame;
+                             
+                         } completion:^(BOOL finished) {
+                             
+                             [self dismissMenu:NO];
+                         }];
+        
+    } else {
+        
+        UIView *v = self.superview;
+        [self removeFromSuperview];
+        if ([v isKindOfClass:[KxMenuOverlay class]]) {
+            [v removeFromSuperview];
         }
     }
 }
@@ -411,7 +431,7 @@ typedef enum {
     const CGFloat kMarginX = 10.f;
     const CGFloat kMarginY = 5.f;
     
-    UIFont *titleFont = [KxMenu titleFont];
+    UIFont *titleFont = self.titleFont;
     if (!titleFont) titleFont = [UIFont boldSystemFontOfSize:16];
     
     CGFloat maxImageWidth = 0;    
@@ -450,8 +470,8 @@ typedef enum {
     const CGFloat titleX = kMarginX * 2 + maxImageWidth;
     const CGFloat titleWidth = maxItemWidth - titleX - kMarginX * 2;
     
-    UIImage *selectedImage = [KxMenuView selectedImage:(CGSize){maxItemWidth, maxItemHeight + 2}];
-    UIImage *gradientLine = [KxMenuView gradientLine: (CGSize){maxItemWidth - kMarginX * 4, 1}];
+    UIImage *selectedImage = [self selectedImage:(CGSize){maxItemWidth, maxItemHeight + 2}];
+    UIImage *gradientLine = [KxMenu gradientLine: (CGSize){maxItemWidth - kMarginX * 4, 1}];
     
     UIView *contentView = [[UIView alloc] initWithFrame:CGRectZero];
     contentView.autoresizingMask = UIViewAutoresizingNone;
@@ -583,18 +603,31 @@ typedef enum {
     return point;
 }
 
-+ (UIImage *) selectedImage: (CGSize) size
+- (UIImage *) selectedImage:(CGSize) size
 {
+    CGFloat R0 = 0.216, G0 = 0.471, B0 = 0.871;
+    CGFloat R1 = 0.059, G1 = 0.353, B1 = 0.839;
+    
+    if (_selectedColor) {
+        CGFloat a;
+        [_selectedColor getRed:&R0 green:&G0 blue:&B0 alpha:&a];
+    }
+    
+    if (_selectedColor1) {
+        CGFloat a;
+        [_selectedColor1 getRed:&R1 green:&G1 blue:&B1 alpha:&a];
+    }
+    
     const CGFloat locations[] = {0,1};
     const CGFloat components[] = {
-        0.216, 0.471, 0.871, 1,
-        0.059, 0.353, 0.839, 1,
+        R0, G0, B0, 1,
+        R1, G1, B1, 1,
     };
     
-    return [self gradientImageWithSize:size locations:locations components:components count:2];
+    return [KxMenu gradientImageWithSize:size locations:locations components:components count:2];
 }
 
-+ (UIImage *) gradientLine: (CGSize) size
++ (UIImage *) gradientLine:(CGSize) size
 {
     const CGFloat locations[5] = {0,0.2,0.5,0.8,1};
     
@@ -725,11 +758,14 @@ typedef enum {
         CGFloat R0 = 0.267, G0 = 0.303, B0 = 0.335;
         CGFloat R1 = 0.040, G1 = 0.040, B1 = 0.040;
         
-        UIColor *tintColor = [KxMenu tintColor];
-        if (tintColor) {
-            
+        if (_tintColor) {
             CGFloat a;
-            [tintColor getRed:&R0 green:&G0 blue:&B0 alpha:&a];
+            [_tintColor getRed:&R0 green:&G0 blue:&B0 alpha:&a];
+        }
+
+        if (_tintColor1) {
+            CGFloat a;
+            [_tintColor1 getRed:&R1 green:&G1 blue:&B1 alpha:&a];
         }
         
         if (_arrowDirection == KxMenuViewArrowDirectionUp ||
@@ -816,132 +852,14 @@ typedef enum {
                             maskImage:nil];
 }
 
-@end
-
-////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-
-static KxMenu *gMenu;
-static UIColor *gTintColor;
-static UIFont *gTitleFont;
-
-@implementation KxMenu {
-    
-    KxMenuView *_menuView;
-    BOOL        _observing;
-}
-
-+ (instancetype) sharedMenu
++ (instancetype) showMenuInView:(UIView *)view
+                       fromRect:(CGRect)rect
+                      menuItems:(NSArray *)menuItems
 {
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        
-        gMenu = [[KxMenu alloc] init];
-    });
-    return gMenu;
-}
-
-- (id) init
-{
-    NSAssert(!gMenu, @"singleton object");
-    
-    self = [super init];
-    if (self) {
-    }
-    return self;
-}
-
-- (void) dealloc
-{
-    if (_observing) {        
-        [[NSNotificationCenter defaultCenter] removeObserver:self];
-    }
-}
-
-- (void) showMenuInView:(UIView *)view
-               fromRect:(CGRect)rect
-              menuItems:(NSArray *)menuItems
-{
-    NSParameterAssert(view);
-    NSParameterAssert(menuItems.count);
-    
-    if (_menuView) {
-        
-        [_menuView dismissMenu:NO];
-        _menuView = nil;
-    }
-
-    if (!_observing) {
-    
-        _observing = YES;
-        
-        [[NSNotificationCenter defaultCenter] addObserver:self
-                                                 selector:@selector(orientationWillChange:)
-                                                     name:UIApplicationWillChangeStatusBarOrientationNotification
-                                                   object:nil];
-    }
-
-    
-    _menuView = [[KxMenuView alloc] init];
-    _menuView.blurredBackground = YES;
-    
-    [_menuView showMenuInView:view fromRect:rect menuItems:menuItems];    
-}
-
-- (void) dismissMenu
-{
-    if (_menuView) {
-        
-        [_menuView dismissMenu:NO];
-        _menuView = nil;
-    }
-    
-    if (_observing) {
-        
-        _observing = NO;
-        [[NSNotificationCenter defaultCenter] removeObserver:self];
-    }
-}
-
-- (void) orientationWillChange: (NSNotification *) n
-{
-    [self dismissMenu];
-}
-
-+ (void) showMenuInView:(UIView *)view
-               fromRect:(CGRect)rect
-              menuItems:(NSArray *)menuItems
-{
-    [[self sharedMenu] showMenuInView:view fromRect:rect menuItems:menuItems];
-}
-
-+ (void) dismissMenu
-{
-    [[self sharedMenu] dismissMenu];
-}
-
-+ (UIColor *) tintColor
-{
-    return gTintColor;
-}
-
-+ (void) setTintColor: (UIColor *) tintColor
-{
-    if (tintColor != gTintColor) {
-        gTintColor = tintColor;
-    }
-}
-
-+ (UIFont *) titleFont
-{
-    return gTitleFont;
-}
-
-+ (void) setTitleFont: (UIFont *) titleFont
-{
-    if (titleFont != gTitleFont) {
-        gTitleFont = titleFont;
-    }
+    KxMenu *menu = [KxMenu new];
+    menu.menuItems = menuItems;
+    [menu showMenuInView:view fromRect:rect];
+    return menu;
 }
 
 @end

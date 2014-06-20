@@ -50,18 +50,23 @@
 
 @end
 
-@interface KxMenu : NSObject
+@interface KxMenu : UIView
 
-+ (void) showMenuInView:(UIView *)view
-               fromRect:(CGRect)rect
-              menuItems:(NSArray *)menuItems;
+@property (readwrite, nonatomic, strong) UIFont  *titleFont;
+@property (readwrite, nonatomic, strong) UIColor *tintColor;
+@property (readwrite, nonatomic, strong) UIColor *tintColor1;
+@property (readwrite, nonatomic, strong) UIColor *selectedColor;
+@property (readwrite, nonatomic, strong) UIColor *selectedColor1;
+@property (readwrite, nonatomic, strong) NSArray *menuItems;
+@property (readwrite, nonatomic) BOOL blurredBackground;
 
-+ (void) dismissMenu;
++ (instancetype) showMenuInView:(UIView *)view
+                       fromRect:(CGRect)rect
+                      menuItems:(NSArray *)menuItems;
 
-+ (UIColor *) tintColor;
-+ (void) setTintColor: (UIColor *) tintColor;
+- (void) showMenuInView:(UIView *)view
+               fromRect:(CGRect)rect;
 
-+ (UIFont *) titleFont;
-+ (void) setTitleFont: (UIFont *) titleFont;
+- (void) dismissMenu;
 
 @end

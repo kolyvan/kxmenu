@@ -21,6 +21,8 @@
     UIButton *_btn5;
     UIButton *_btn6;
     UIButton *_btn7;
+    
+    KxMenu   *_kxMenu;
 }
 
 - (id)init
@@ -56,8 +58,8 @@
     
     _btn3 = [UIButton buttonWithType:UIButtonTypeRoundedRect];
     _btn3.frame = CGRectMake(W - 105, 5, 100, 50);
-    [_btn3 setTitle:@"Click me" forState:UIControlStateNormal];
-    [_btn3 addTarget:self action:@selector(showMenu:) forControlEvents:UIControlEventTouchUpInside];
+    [_btn3 setTitle:@"Click me (Blur)" forState:UIControlStateNormal];
+    [_btn3 addTarget:self action:@selector(showMenuBlur:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:_btn3];
     
     _btn4 = [UIButton buttonWithType:UIButtonTypeRoundedRect];
@@ -111,6 +113,31 @@
 
 - (void)showMenu:(UIButton *)sender
 {
+    [KxMenu showMenuInView:self.view
+                  fromRect:sender.frame
+                 menuItems:self.mkMenuItems];
+}
+
+- (void)showMenuBlur:(UIButton *)sender
+{
+    if (!_kxMenu) {
+        
+        _kxMenu = [KxMenu new];
+        _kxMenu.menuItems = self.mkMenuItems;
+        
+        _kxMenu.blurredBackground = YES;
+
+        _kxMenu.tintColor = [[UIColor orangeColor] colorWithAlphaComponent:0.5f];
+        _kxMenu.selectedColor  = [UIColor colorWithRed:0.9f green:0 blue:0 alpha:1.f];
+        _kxMenu.selectedColor1 = [UIColor colorWithRed:0.8f green:0 blue:0 alpha:1.f];
+    }
+    
+    [_kxMenu showMenuInView:self.view
+                   fromRect:sender.frame];
+}
+
+- (NSArray *) mkMenuItems
+{
     NSArray *menuItems =
     @[
       
@@ -118,7 +145,7 @@
                      image:nil
                     target:nil
                     action:NULL],
-            
+      
       [KxMenuItem menuItem:@"Share this"
                      image:[UIImage imageNamed:@"action_icon"]
                     target:self
@@ -149,9 +176,7 @@
     first.foreColor = [UIColor colorWithRed:47/255.0f green:112/255.0f blue:225/255.0f alpha:1.0];
     first.alignment = NSTextAlignmentCenter;
     
-    [KxMenu showMenuInView:self.view
-                  fromRect:sender.frame
-                 menuItems:menuItems];
+    return menuItems;
 }
 
 - (void) pushMenuItem:(id)sender
