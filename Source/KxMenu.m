@@ -860,7 +860,7 @@ typedef enum {
                        fromRect:(CGRect)rect
                       menuItems:(NSArray *)menuItems
 {
-    KxMenu *menu = [KxMenu new];
+    KxMenu *menu = [[self alloc] init];
     menu.menuItems = menuItems;
     dispatch_async(dispatch_get_main_queue(), ^{
         // it allows to tune parameters before showing menu
