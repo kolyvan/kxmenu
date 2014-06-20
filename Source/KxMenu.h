@@ -59,6 +59,7 @@
 @property (readwrite, nonatomic, strong) UIColor *selectedColor1;
 @property (readwrite, nonatomic, strong) NSArray *menuItems;
 @property (readwrite, nonatomic) BOOL blurredBackground;
+@property (readwrite, nonatomic, strong) Class overlayClass;
 
 + (instancetype) showMenuInView:(UIView *)view
                        fromRect:(CGRect)rect
@@ -67,6 +68,11 @@
 - (void) showMenuInView:(UIView *)view
                fromRect:(CGRect)rect;
 
-- (void) dismissMenu;
+- (void)dismissMenu;
+- (void)dismissMenu:(BOOL) animated;
 
+@end
+
+@interface KxMenuOverlay : UIView
+- (KxMenu *) menuView;
 @end

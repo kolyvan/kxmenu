@@ -45,12 +45,9 @@ const CGFloat kArrowSize = 12.f;
 
 ////////////////////////////////////////////////////////////////////////////////
 
-@interface KxMenuOverlay : UIView
-@end
-
 @implementation KxMenuOverlay
 
-// - (void) dealloc { NSLog(@"dealloc %@", self); }
+//- (void) dealloc { NSLog(@"dealloc <%@ %p>", [self class], self); }
 
 - (id)initWithFrame:(CGRect)frame
 {
@@ -58,25 +55,27 @@ const CGFloat kArrowSize = 12.f;
     if (self) {
         self.backgroundColor = [UIColor clearColor];
         self.opaque = NO;
-        
-        UITapGestureRecognizer *gestureRecognizer;
-        gestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self
-                                                                    action:@selector(singleTap:)];
-        [self addGestureRecognizer:gestureRecognizer];
     }
     return self;
 }
 
-// thank horaceho https://github.com/horaceho
-// for his solution described in https://github.com/kolyvan/kxmenu/issues/9
+- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
+{
+    UIView *touched = [[touches anyObject] view];
+    if (touched == self) {        
+        //[self.nextResponder touchesBegan:touches withEvent:event];
+        [self.menuView dismissMenu:YES];
+    }
+}
 
-- (void)singleTap:(UITapGestureRecognizer *)recognizer
+- (KxMenu *) menuView
 {
     for (UIView *v in self.subviews) {
-        if ([v isKindOfClass:[KxMenu class]] && [v respondsToSelector:@selector(dismissMenu:)]) {
-            [v performSelector:@selector(dismissMenu:) withObject:@(YES)];
+        if ([v isKindOfClass:[KxMenu class]]) {
+            return (KxMenu *)v;
         }
     }
+    return nil;
 }
 
 @end
@@ -137,7 +136,6 @@ const CGFloat kArrowSize = 12.f;
 @end
 
 ////////////////////////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
 
 typedef enum {
   
@@ -183,9 +181,8 @@ typedef enum {
 {
     if (_didObserve) {
         [[NSNotificationCenter defaultCenter] removeObserver:self];
-    }
-    
-    // NSLog(@"dealloc %@", self);
+    }    
+    //NSLog(@"dealloc <%@ %p>", [self class], self);
 }
 
 - (void) orientationWillChange: (NSNotification *) n
@@ -351,8 +348,9 @@ typedef enum {
     }
     
     self.frame = (CGRect){self.arrowPoint, 1, 1};
-        
-    KxMenuOverlay *overlay = [[KxMenuOverlay alloc] initWithFrame:view.bounds];
+    
+    Class overlayClass = _overlayClass ? _overlayClass : [KxMenuOverlay class];
+    KxMenuOverlay *overlay = [[overlayClass alloc] initWithFrame:view.bounds];
     [overlay addSubview:self];
     [view addSubview:overlay];
     
@@ -384,6 +382,11 @@ typedef enum {
     
     if (animated) {
         
+        if (_contentView.hidden) {
+            [self dismissMenu:NO];
+            return;
+        }
+        
         _contentView.hidden = YES;
         const CGRect toFrame = (CGRect){self.arrowPoint, 1, 1};
         
@@ -400,9 +403,10 @@ typedef enum {
         
     } else {
         
+        Class overlayClass = _overlayClass ? _overlayClass : [KxMenuOverlay class];
         UIView *v = self.superview;
         [self removeFromSuperview];
-        if ([v isKindOfClass:[KxMenuOverlay class]]) {
+        if ([v isKindOfClass:overlayClass]) {
             [v removeFromSuperview];
         }
     }
