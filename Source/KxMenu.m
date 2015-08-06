@@ -624,8 +624,8 @@ typedef enum {
 - (void)drawBackground:(CGRect)frame
              inContext:(CGContextRef) context
 {
-    CGFloat R0 = 0.267, G0 = 0.303, B0 = 0.335;
-    CGFloat R1 = 0.040, G1 = 0.040, B1 = 0.040;
+    CGFloat R0 = 0, G0 = 0, B0 = 0;
+    CGFloat R1 = 0, G1 = 0, B1 = 0;
     
     UIColor *tintColor = [KxMenu tintColor];
     if (tintColor) {
@@ -726,8 +726,8 @@ typedef enum {
         
     const CGFloat locations[] = {0, 1};
     const CGFloat components[] = {
-        R0, G0, B0, 1,
-        R1, G1, B1, 1,
+        R0, G0, B0, 0.7,
+        R1, G1, B1, 0.7,
     };
     
     CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
