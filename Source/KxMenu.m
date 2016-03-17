@@ -885,4 +885,22 @@ static UIFont *gTitleFont;
     }
 }
 
+- (BOOL) isShow
+{
+    if (_menuView.superview) {
+        return YES;
+    }
+    else{
+        return NO;
+    }
+}
+
++ (BOOL)isShow{
+    if ([[self sharedMenu] isShow]) {
+        return YES;
+    }
+    else{
+        return NO;
+    }
+}
 @end
