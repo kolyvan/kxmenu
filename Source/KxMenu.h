@@ -64,4 +64,5 @@
 + (UIFont *) titleFont;
 + (void) setTitleFont: (UIFont *) titleFont;
 
++ (BOOL)isShow;
 @end
