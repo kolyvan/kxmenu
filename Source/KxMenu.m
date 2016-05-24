@@ -626,12 +626,12 @@ typedef enum {
 {
     CGFloat R0 = 0.267, G0 = 0.303, B0 = 0.335;
     CGFloat R1 = 0.040, G1 = 0.040, B1 = 0.040;
+    CGFloat alpha;
     
     UIColor *tintColor = [KxMenu tintColor];
     if (tintColor) {
         
-        CGFloat a;
-        [tintColor getRed:&R0 green:&G0 blue:&B0 alpha:&a];
+        [tintColor getRed:&R0 green:&G0 blue:&B0 alpha:&alpha];
     }
     
     CGFloat X0 = frame.origin.x;
@@ -659,7 +659,7 @@ typedef enum {
         [arrowPath addLineToPoint: (CGPoint){arrowX0, arrowY1}];
         [arrowPath addLineToPoint: (CGPoint){arrowXM, arrowY0}];
         
-        [[UIColor colorWithRed:R0 green:G0 blue:B0 alpha:1] set];
+        [[UIColor colorWithRed:R0 green:G0 blue:B0 alpha:alpha] set];
         
         Y0 += kArrowSize;
         
@@ -676,7 +676,7 @@ typedef enum {
         [arrowPath addLineToPoint: (CGPoint){arrowX0, arrowY0}];
         [arrowPath addLineToPoint: (CGPoint){arrowXM, arrowY1}];
         
-        [[UIColor colorWithRed:R1 green:G1 blue:B1 alpha:1] set];
+        [[UIColor colorWithRed:R1 green:G1 blue:B1 alpha:alpha] set];
         
         Y1 -= kArrowSize;
         
@@ -693,7 +693,7 @@ typedef enum {
         [arrowPath addLineToPoint: (CGPoint){arrowX1, arrowY1}];
         [arrowPath addLineToPoint: (CGPoint){arrowX0, arrowYM}];
         
-        [[UIColor colorWithRed:R0 green:G0 blue:B0 alpha:1] set];
+        [[UIColor colorWithRed:R0 green:G0 blue:B0 alpha:alpha] set];
         
         X0 += kArrowSize;
         
@@ -710,7 +710,7 @@ typedef enum {
         [arrowPath addLineToPoint: (CGPoint){arrowX1, arrowY1}];
         [arrowPath addLineToPoint: (CGPoint){arrowX0, arrowYM}];
         
-        [[UIColor colorWithRed:R1 green:G1 blue:B1 alpha:1] set];
+        [[UIColor colorWithRed:R1 green:G1 blue:B1 alpha:alpha] set];
         
         X1 -= kArrowSize;
     }
@@ -726,8 +726,8 @@ typedef enum {
         
     const CGFloat locations[] = {0, 1};
     const CGFloat components[] = {
-        R0, G0, B0, 1,
-        R1, G1, B1, 1,
+        R0, G0, B0, alpha,
+        R1, G1, B1, alpha,
     };
     
     CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
