@@ -183,6 +183,11 @@
 			attributes = {
 				LastUpgradeCheck = 0460;
 				ORGANIZATIONNAME = "Konstantin Bukreev";
+				TargetAttributes = {
+					87292BA31746668300821739 = {
+						DevelopmentTeam = 6L8742VYU6;
+					};
+				};
 			};
 			buildConfigurationList = 87292B9F1746668300821739 /* Build configuration list for PBXProject "KxMenuExample" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -312,6 +317,8 @@
 		87292BCB1746668300821739 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				DEVELOPMENT_TEAM = 6L8742VYU6;
+				ENABLE_BITCODE = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "KxMenuExample/KxMenuExample-Prefix.pch";
 				INFOPLIST_FILE = "KxMenuExample/KxMenuExample-Info.plist";
@@ -324,6 +331,8 @@
 		87292BCC1746668300821739 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				DEVELOPMENT_TEAM = 6L8742VYU6;
+				ENABLE_BITCODE = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "KxMenuExample/KxMenuExample-Prefix.pch";
 				INFOPLIST_FILE = "KxMenuExample/KxMenuExample-Info.plist";
