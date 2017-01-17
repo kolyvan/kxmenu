@@ -416,7 +416,7 @@ typedef enum {
     
     for (KxMenuItem *menuItem in _menuItems) {
 
-        const CGSize titleSize = [menuItem.title sizeWithFont:titleFont];
+        const CGSize titleSize = [menuItem.title sizeWithAttributes:@{NSFontAttributeName:titleFont}];
         const CGSize imageSize = menuItem.image.size;
 
         const CGFloat itemHeight = MAX(titleSize.height, imageSize.height) + kMarginY * 2;
@@ -436,7 +436,7 @@ typedef enum {
     const CGFloat titleWidth = maxItemWidth - titleX - kMarginX * 2;
     
     UIImage *selectedImage = [KxMenuView selectedImage:(CGSize){maxItemWidth, maxItemHeight + 2}];
-    UIImage *gradientLine = [KxMenuView gradientLine: (CGSize){maxItemWidth - kMarginX * 4, 1}];
+    UIImage *gradientLine = [KxMenuView gradientLine: (CGSize){maxItemWidth - kMarginX * 4, 0.00001}];
     
     UIView *contentView = [[UIView alloc] initWithFrame:CGRectZero];
     contentView.autoresizingMask = UIViewAutoresizingNone;
@@ -572,8 +572,8 @@ typedef enum {
 {
     const CGFloat locations[] = {0,1};
     const CGFloat components[] = {
-        0.216, 0.471, 0.871, 1,
-        0.059, 0.353, 0.839, 1,
+        0.420, 0.463, 0.502, 0.5,
+        0.420, 0.463, 0.502, 0.5,
     };
     
     return [self gradientImageWithSize:size locations:locations components:components count:2];
@@ -583,14 +583,14 @@ typedef enum {
 {
     const CGFloat locations[5] = {0,0.2,0.5,0.8,1};
     
-    const CGFloat R = 0.44f, G = 0.44f, B = 0.44f;
+    const CGFloat R = 1.00f, G = 1.00f, B = 1.00f;
         
     const CGFloat components[20] = {
-        R,G,B,0.1,
-        R,G,B,0.4,
-        R,G,B,0.7,
-        R,G,B,0.4,
-        R,G,B,0.1
+        R,G,B,0.3,
+        R,G,B,0.3,
+        R,G,B,0.3,
+        R,G,B,0.3,
+        R,G,B,0.3
     };
     
     return [self gradientImageWithSize:size locations:locations components:components count:5];
@@ -624,14 +624,15 @@ typedef enum {
 - (void)drawBackground:(CGRect)frame
              inContext:(CGContextRef) context
 {
-    CGFloat R0 = 0.267, G0 = 0.303, B0 = 0.335;
-    CGFloat R1 = 0.040, G1 = 0.040, B1 = 0.040;
+    CGFloat R0 = 0.314, G0 = 0.384, B0 = 0.451;
+    CGFloat R1 = 0.314, G1 = 0.384, B1 = 0.451;
     
     UIColor *tintColor = [KxMenu tintColor];
     if (tintColor) {
         
         CGFloat a;
         [tintColor getRed:&R0 green:&G0 blue:&B0 alpha:&a];
+        [tintColor getRed:&R1 green:&G1 blue:&B1 alpha:&a];
     }
     
     CGFloat X0 = frame.origin.x;
@@ -722,7 +723,7 @@ typedef enum {
     const CGRect bodyFrame = {X0, Y0, X1 - X0, Y1 - Y0};
     
     UIBezierPath *borderPath = [UIBezierPath bezierPathWithRoundedRect:bodyFrame
-                                                          cornerRadius:8];
+                                                          cornerRadius:3];
         
     const CGFloat locations[] = {0, 1};
     const CGFloat components[] = {
